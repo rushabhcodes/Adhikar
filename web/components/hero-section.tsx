@@ -41,11 +41,11 @@ export function HeroSection() {
           </div>
           <div className="flex items-center justify-center gap-4 text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
-              <img src="/placeholder.svg" alt="NVIDIA" className="h-6" />
+              
               Technology program
             </div>
             <div className="flex items-center gap-2">
-              <img src="/placeholder.svg" alt="Google" className="h-6" />
+      
               For Startups
             </div>
           </div>

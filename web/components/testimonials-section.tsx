@@ -55,7 +55,7 @@ export function TestimonialsSection({ id }: { id?: string }) {
               <Card className="p-6">
                 <div className="flex items-center mb-4">
                   <Avatar className="h-12 w-12">
-                    <AvatarImage src={`/placeholder.svg`} alt={testimonial.name} />
+                    <AvatarImage src={`/next.svg`} alt={testimonial.name} />
                     <AvatarFallback>{testimonial.name[0]}</AvatarFallback>
                   </Avatar>
                   <div className="ml-4">
