@@ -88,7 +88,7 @@ export default function DocumentSummarizer() {
         title: 'Copied!',
         description: 'Summary copied to clipboard'
       })
-    } catch (err) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to copy text',
