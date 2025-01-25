@@ -4,6 +4,12 @@ import { useState } from "react";
 import axios from "axios";
 import MarkdownRenderer from "@/components/MarkdownRenderer";
 
+// Create axios instance with base URL
+const apiClient = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_BACKEND_URL || 'http://127.0.0.1:8000',
+  timeout: 30000, // 30 seconds timeout
+})
+
 interface ChatMessage {
   role: "user" | "assistant";
   content: string;
@@ -37,7 +43,7 @@ export default function ChatPage() {
 
       setMessages((prev) => [...prev, { role: "user", content: inputMessage }]);
 
-      const response = await axios.post<{
+      const response = await apiClient.post<{
         response: string;
         conversation_id: string;
         tokens_used: number;
@@ -71,9 +77,9 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="flex flex-col  max-w-3xl mx-auto relative">
+    <div className="flex flex-col max-w-3xl mx-auto relative">
       {/* Chat history */}
-      <div className="flex-1 overflow-y-auto p-4 pb-24">
+      <div className="flex-1 overflow-y-auto p-4 pb-24 pt-20">
         {messages.map((message, index) => {
           const { main, note } = splitNote(message.content);
           

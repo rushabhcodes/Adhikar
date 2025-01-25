@@ -15,6 +15,12 @@ interface SummaryResponse {
   summary: string
 }
 
+// Create axios instance with base URL
+const apiClient = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_BACKEND_URL || 'http://127.0.0.1:8000',
+  timeout: 30000, // 30 seconds timeout
+})
+
 export default function DocumentSummarizer() {
   const [file, setFile] = useState<File | null>(null)
   const [summary, setSummary] = useState<string>('')
@@ -50,15 +56,11 @@ export default function DocumentSummarizer() {
       if (pageRange.from) formData.append('from_page', pageRange.from)
       if (pageRange.to) formData.append('to_page', pageRange.to)
 
-      const response = await axios.post<SummaryResponse>(
-        'http://127.0.0.1:8000/api/summarize',
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        }
-      )
+      const response = await apiClient.post<SummaryResponse>('/api/summarize', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
 
       setSummary(response.data.summary)
       toast({
