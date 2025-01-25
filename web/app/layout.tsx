@@ -1,50 +1,37 @@
-// These styles apply to every route in the application
-import { Metadata } from "next";
-import { Inter } from "next/font/google";
-import { Toaster } from "react-hot-toast";
-import { Suspense } from "react";
-import Header from "@/components/header/header";
-import "@/app/globals.css";
+import type { Metadata } from "next";
+import localFont from "next/font/local";
+import { Toaster } from "@/components/ui/sonner";
+import "./globals.css";
 
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
+const geistSans = localFont({
+  src: "./fonts/GeistVF.woff",
+  variable: "--font-geist-sans",
+  weight: "100 900",
+});
+const geistMono = localFont({
+  src: "./fonts/GeistMonoVF.woff",
+  variable: "--font-geist-mono",
+  weight: "100 900",
 });
 
-const title = "Next.js Prisma Postgres Auth Starter";
-const description =
-  "This is a Next.js starter kit that uses Next-Auth for simple email + password login and a Postgres database to persist the data.";
-
 export const metadata: Metadata = {
-  title,
-  description,
-  twitter: {
-    card: "summary_large_image",
-    title,
-    description,
-  },
-  metadataBase: new URL("https://nextjs-postgres-auth.vercel.app"),
-  creator: "shadcn",
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "white" },
-    { media: "(prefers-color-scheme: dark)", color: "black" },
-  ],
+  title: "Adhikar",
+  description:
+    "Next Auth Template using the Next Auth v5 (Auth.js), Prisma and much more",
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   return (
     <html lang="en">
-      <body className={inter.variable}>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-primary`}
+      >
         <Toaster />
-        <Suspense fallback="Loading...">
-          <Header />
-        </Suspense>
         {children}
-
       </body>
     </html>
   );
