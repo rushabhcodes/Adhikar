@@ -1,12 +1,8 @@
-from fastapi import FastAPI, File, Form, UploadFile, HTTPException
-from fastapi.responses import JSONResponse
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from chat import router as chat_router
 from summarize import router as summarize_router
-from pathlib import Path
-from generate_quiz import extract_text_from_pdf, generate_quiz
-from utils import clean_text
-import os
+
 
 app = FastAPI()
 
@@ -17,10 +13,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-# Directory for saving uploaded files
-UPLOAD_DIR = "uploads"
-os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 
 @app.get("/")
