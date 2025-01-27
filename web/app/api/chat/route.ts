@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server'
 import axios from 'axios'
+import https from 'https'
 
 const BACKEND_URL = process.env.BACKEND_URL || 'https://80.225.193.58:8000'
+const httpsAgent = new https.Agent({ rejectUnauthorized: false });
 
 export async function POST(request: Request) {
   try {
@@ -11,6 +13,7 @@ export async function POST(request: Request) {
       headers: {
         'Content-Type': 'application/json',
       },
+      httpsAgent: httpsAgent,
     })
 
     return NextResponse.json(response.data, {
