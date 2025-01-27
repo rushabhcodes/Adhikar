@@ -4,12 +4,6 @@ import { useState } from "react";
 import axios from "axios";
 import MarkdownRenderer from "@/components/MarkdownRenderer";
 
-// Create axios instance with base URL
-const apiClient = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_BACKEND_URL || 'http://127.0.0.1:8000',
-  timeout: 30000, // 30 seconds timeout
-})
-
 interface ChatMessage {
   role: "user" | "assistant";
   content: string;
@@ -18,7 +12,6 @@ interface ChatMessage {
 const splitNote = (content: string) => {
   const noteIndex = content.indexOf("Note:");
   if (noteIndex === -1) return { main: content, note: null };
-  
   return {
     main: content.slice(0, noteIndex),
     note: content.slice(noteIndex)
@@ -34,37 +27,33 @@ export default function ChatPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (!inputMessage.trim()) return;
 
     try {
       setIsLoading(true);
       setError(null);
+      const userMessage = inputMessage;
+      setInputMessage("");
 
-      setMessages((prev) => [...prev, { role: "user", content: inputMessage }]);
+      // Add user message immediately
+      setMessages(prev => [...prev, { role: "user", content: userMessage }]);
 
-      const response = await apiClient.post<{
-        response: string;
-        conversation_id: string;
-        tokens_used: number;
-      }>("http://127.0.0.1:8000/api/chat", {
-        message: inputMessage,
+      const response = await axios.post("/api/chat", {
+        message: userMessage,
         conversation_id: conversationId,
         stream: false,
       });
 
-      setMessages((prev) => [
+      // Add assistant response
+      setMessages(prev => [
         ...prev,
-        { role: "assistant", content: response.data.response },
+        { role: "assistant", content: response.data.response }
       ]);
-
       setConversationId(response.data.conversation_id);
-      setInputMessage("");
     } catch (error) {
       console.error("Chat error:", error);
       setError("Failed to process your message. Please try again.");
-
-      setMessages((prev) => [
+      setMessages(prev => [
         ...prev,
         {
           role: "assistant",
@@ -77,9 +66,8 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="flex flex-col max-w-3xl mx-auto relative">
-      {/* Chat history */}
-      <div className="flex-1 overflow-y-auto p-4 pb-24 pt-20">
+    <div className="flex flex-col h-screen max-w-3xl mx-auto">
+      <div className="flex-1 overflow-y-auto p-4 pb-24">
         {messages.map((message, index) => {
           const { main, note } = splitNote(message.content);
           
@@ -127,15 +115,14 @@ export default function ChatPage() {
         )}
       </div>
 
-      {/* Floating input container */}
-      <div className="sticky bottom-0 bg-white border-t border-gray-100 pt-4 px-4 rounded-lg">
+      <div className="sticky bottom-0 bg-white border-t border-gray-100 p-4">
         {error && (
           <div className="mb-2 p-2 bg-red-100 text-red-600 rounded text-center">
             {error}
           </div>
         )}
         
-        <form onSubmit={handleSubmit} className="flex gap-2 pb-4">
+        <form onSubmit={handleSubmit} className="flex gap-2">
           <input
             type="text"
             value={inputMessage}

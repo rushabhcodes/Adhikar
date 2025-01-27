@@ -45,23 +45,24 @@ export default function DocumentSummarizer() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!file) return
-
+  
     try {
       setLoading(true)
       setError(null)
       setSummary('')
-
+  
       const formData = new FormData()
       formData.append('file', file)
       if (pageRange.from) formData.append('from_page', pageRange.from)
       if (pageRange.to) formData.append('to_page', pageRange.to)
-
+  
+      // Request is now sent to local API route
       const response = await apiClient.post<SummaryResponse>('/api/summarize', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       })
-
+  
       setSummary(response.data.summary)
       toast({
         title: 'Summary Generated',
