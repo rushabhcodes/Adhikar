@@ -18,7 +18,11 @@ const geistMono = localFont({
 export const metadata: Metadata = {
   title: "Adhikar",
   description:
-    "Next Auth Template using the Next Auth v5 (Auth.js), Prisma and much more",
+    "AI Lawyer is a platform that helps you understand legal documents and rights.",
+    themeColor: [
+      { media: "(prefers-color-scheme: light)", color: "white" },
+      { media: "(prefers-color-scheme: dark)", color: "black" },
+    ],
 };
 
 export default function RootLayout({
@@ -33,7 +37,6 @@ export default function RootLayout({
       >
         <Toaster />
         <Suspense fallback="Loading...">
-          {/* <Header /> */}
         </Suspense>
         {children}
       </body>

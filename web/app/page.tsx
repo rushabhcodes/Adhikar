@@ -1,18 +1,28 @@
-import { LoginButton } from "@/components/auth/login-button";
-import { Button } from "@/components/ui/button";
+import { AppStoreSection } from "@/components/app-store-section";
+import { FAQSection } from "@/components/faq-section";
+import { FeaturesSection } from "@/components/features-section";
+import { Footer } from "@/components/footer";
+import { HeroSection } from "@/components/hero-section";
+import { Navigation } from "@/components/navigation";
+import { StatsSection } from "@/components/ststs-section";
+import { TestimonialsSection } from "@/components/testimonials-section";
+import { UsersSection } from "@/components/users-section";
 
 export default async function Home() {
   return (
-    <main className="flex h-full flex-col items-center justify-center">
-      <div className="space-y-6 text-center">
-        <h1 className="text-6xl font-bold text-white drop-shadow-sm">Auth</h1>
-        <p className="text-white text-lg">A simple authentification service</p>
-        <div>
-          <LoginButton mode="modal" asChild>
-            <Button variant={"secondary"}>Sign In</Button>
-          </LoginButton>
-        </div>
-      </div>
+    <main className="flex justify-center flex-col items-center bg-white">
+      <Navigation />
+      <main>
+        <HeroSection />
+        <FeaturesSection id="features" />
+        <UsersSection id="users" />
+        <StatsSection />
+        <TestimonialsSection id="testimonials" />
+        <AppStoreSection />
+        <FAQSection id="faq" />
+      </main>
+      <Footer />
+      
     </main>
   );
 }
