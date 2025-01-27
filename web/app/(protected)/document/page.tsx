@@ -100,7 +100,7 @@ export default function DocumentSummarizer() {
   }
 
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-cyan-50/20 p-8 relative overflow-hidden">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-cyan-50/20 pt-24 px-8 pb-8 relative overflow-hidden">
         {/* Animated background elements */}
         <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] opacity-10"></div>
         <div className="absolute inset-0 animate-gradient-shift bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>

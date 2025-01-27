@@ -1,7 +1,6 @@
-import type { NextApiRequest, NextApiResponse } from "next";
+// app/api/summarize/route.ts
+import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
-import formidable, { Fields, Files } from "formidable";
-import fs from "fs";
 import FormData from "form-data";
 import https from "https";
 
@@ -10,60 +9,46 @@ const httpsAgent = new https.Agent({ rejectUnauthorized: false });
 
 export const dynamic = "force-dynamic";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ message: "Method not allowed" });
-  }
-
+export async function POST(request: NextRequest) {
   try {
-    const form = formidable({
-      multiples: false,
-      uploadDir: "/tmp",
-      keepExtensions: true,
-    });
+    const formData = await request.formData();
+    const file = formData.get("file") as File;
+    const fromPage = formData.get("from_page");
+    const toPage = formData.get("to_page");
 
-    // Properly typed promise resolution
-    const [fields, files] = await new Promise<[Fields, Files]>(
-      (resolve, reject) => {
-        form.parse(req, (err, fields, files) => {
-          if (err) reject(err);
-          else resolve([fields, files]);
-        });
-      }
-    );
-
-    // Type-safe file access
-    const file = files.file?.[0] as formidable.File | undefined;
     if (!file) {
-      return res.status(400).json({ message: "No file uploaded" });
+      return NextResponse.json(
+        { message: "No file uploaded" },
+        { status: 400 }
+      );
     }
 
-    // Handle page ranges with proper type checking
-    const fromPage = fields.from_page?.[0];
-    const toPage = fields.to_page?.[0];
-
-    const filename = file.originalFilename || "uploaded-file";
-    const formData = new FormData();
-    formData.append("file", fs.createReadStream(file.filepath), filename);
-    if (fromPage) formData.append("from_page", fromPage);
-    if (toPage) formData.append("to_page", toPage);
+    // Convert Web API File to Node.js readable stream
+    const buffer = Buffer.from(await file.arrayBuffer());
+    const formDataForBackend = new FormData();
+    formDataForBackend.append("file", buffer, file.name);
+    if (fromPage) formDataForBackend.append("from_page", fromPage.toString());
+    if (toPage) formDataForBackend.append("to_page", toPage.toString());
 
     const response = await axios.post(
       `${BACKEND_URL}/api/summarize`,
-      formData,
-      { headers: formData.getHeaders(), httpsAgent: httpsAgent }
+      formDataForBackend,
+      {
+        headers: formDataForBackend.getHeaders(),
+        httpsAgent: httpsAgent,
+      }
     );
 
-    res.status(200).json({ summary: response.data.summary });
+    return NextResponse.json({ summary: response.data.summary });
   } catch (error) {
     console.error("Proxy error:", error);
-    res.status(500).json({
-      message: axios.isAxiosError(error)
-        ? error.response?.data?.message || "Internal server error"
-        : "Internal server error",
-    });
+    return NextResponse.json(
+      {
+        message: axios.isAxiosError(error)
+          ? error.response?.data?.message || "Internal server error"
+          : "Internal server error",
+      },
+      { status: 500 }
+    );
   }
 }
