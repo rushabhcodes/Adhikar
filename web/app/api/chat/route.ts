@@ -1,32 +1,37 @@
-import axios from 'axios';
-import type { NextApiRequest, NextApiResponse } from 'next';
+import { NextResponse } from 'next/server'
+import axios from 'axios'
 
-const BACKEND_URL = process.env.BACKEND_URL || 'https://80.225.193.58:8000';
+const BACKEND_URL = process.env.BACKEND_URL || 'https://80.225.193.58:8000'
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
+export async function POST(request: Request) {
   try {
-    // Forward the request to the backend server
-    const response = await axios.post(`${BACKEND_URL}/api/chat`, req.body, {
+    const body = await request.json()
+    
+    const response = await axios.post(`${BACKEND_URL}/api/chat`, body, {
       headers: {
         'Content-Type': 'application/json',
       },
-    });
+    })
 
-    // Send the backend response back to the client
-    res.status(response.status).json(response.data);
+    return NextResponse.json(response.data, {
+      status: response.status
+    })
+    
   } catch (error) {
-    console.error('Proxy error:', error);
+    console.error('Proxy error:', error)
+    
     if (axios.isAxiosError(error)) {
-      res.status(error.response?.status || 500).json(error.response?.data);
-    } else {
-      res.status(500).json({ error: 'Internal server error' });
+      return NextResponse.json(error.response?.data || { error: 'Backend error' }, {
+        status: error.response?.status || 500
+      })
     }
+    
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    )
   }
 }
+
+// Optional: Configure route segment behavior
+export const dynamic = 'force-dynamic' // Disable static optimization

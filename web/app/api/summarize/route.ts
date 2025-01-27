@@ -6,11 +6,7 @@ import FormData from 'form-data'
 
 const BACKEND_URL = process.env.BACKEND_URL || 'https://80.225.193.58:8000';
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-}
+export const dynamic = 'force-dynamic'
 
 export default async function handler(
   req: NextApiRequest,
